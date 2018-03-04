@@ -1,4 +1,4 @@
-#include <Arduboy.h>
+#include <Arduboy2.h>
 
 #include "bitmaps.h"
 #include "digits.h"
@@ -43,7 +43,7 @@ enum {
 
 char text_buffer[32]; // General string buffer
 
-Arduboy arduboy;
+Arduboy2 arduboy;
 
 byte selectedX = 0;
 byte selectedY = 0;
@@ -234,7 +234,7 @@ void propagate(byte x, byte y) {
         return;
     }
 
-    if (state != STATE_LOSE && arduboy.audio.enabled()) arduboy.tunes.tone(587, 20);
+//    if (state != STATE_LOSE && arduboy.audio.enabled()) arduboy.tunes.tone(587, 20);
 
     setOpen(x, y);
     if (getSurroundingMines(x, y) > 0) {
@@ -322,14 +322,14 @@ void settings() {
                 arduboy.audio.off();
             }
             else {
-                arduboy.tunes.tone(587, 40);
-                arduboy.audio.on();
+//                arduboy.tunes.tone(587, 40);
+//                arduboy.audio.on();
             }
             arduboy.audio.saveOnOff();
         }
         else if (menuPosition == 1) {
             fastMode = !fastMode;
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(587, 40);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(587, 40);
         }
         else if (menuPosition == 2) {
             menuPosition = 0;
@@ -503,10 +503,10 @@ void playGame() {
     } else if (getButtonDown(B_BUTTON)) {
         startTimer();
         if (isFlagged(selectedX, selectedY)) {
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(800, 50);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(800, 50);
             unsetFlag(selectedX, selectedY);
         } else if (!isOpen(selectedX, selectedY)) {
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(980, 50);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(980, 50);
             setFlag(selectedX, selectedY);
         } else if (fastMode) {
             clickAllSurrounding(selectedX, selectedY);
@@ -526,13 +526,13 @@ void winGame() {
     arduboy.drawBitmap(109, 14, win, 18, 30, WHITE);
     arduboy.display();
 
-    if (arduboy.audio.enabled()) {
-        arduboy.tunes.tone(587, 40);
-        delay(160);
-        arduboy.tunes.tone(782, 40);
-        delay(160);
-        arduboy.tunes.tone(977, 40);
-    }
+//    if (arduboy.audio.enabled()) {
+//        arduboy.tunes.tone(587, 40);
+//        delay(160);
+//        arduboy.tunes.tone(782, 40);
+//        delay(160);
+//        arduboy.tunes.tone(977, 40);
+//    }
 
     while (!getButtonDown(A_BUTTON)) {
     }
@@ -550,9 +550,9 @@ void loseGame() {
     arduboy.display();
 
     if (arduboy.audio.enabled()) {
-        arduboy.tunes.tone(587, 40);
+//        arduboy.tunes.tone(587, 40);
         delay(160);
-        arduboy.tunes.tone(392, 40);
+//        arduboy.tunes.tone(392, 40);
     }
 
     while (!getButtonDown(A_BUTTON)) {
@@ -651,18 +651,18 @@ void enterInitials() {
             if (index > 0) {
                 index--;
             }
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
         }
         else if (getButtonDown(RIGHT_BUTTON)) {
             if (index < 2) {
                 index++;
             }
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
         }
 
         if (clickButton(DOWN_BUTTON)) {
             initials[index]++;
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
             // A-Z 0-9 :-? !-/ ' '
             if (initials[index] == '0') {
                 initials[index] = ' ';
@@ -676,7 +676,7 @@ void enterInitials() {
         }
         else if (clickButton(UP_BUTTON)) {
             initials[index]--;
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
             if (initials[index] == ' ') {
                 initials[index] = '?';
             } else if (initials[index] == '/') {
@@ -689,7 +689,7 @@ void enterInitials() {
         }
 
         if (getButtonDown(A_BUTTON)) {
-            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
             if (index < 2) {
                 index++;
             } else {
@@ -700,91 +700,91 @@ void enterInitials() {
 }
 
 void clearHighScores(byte file) {
-    // Each block of EEPROM has 3 high scores, and each high score entry
-    // is 5 bytes long:    3 bytes for initials and two bytes for score.
-    int maxSize = file * 3 * 5 + 15;
-    for (int i = file * 3 * 5; i < maxSize ; i++) {
-        EEPROM.write(i, 0);
-    }
+//    // Each block of EEPROM has 3 high scores, and each high score entry
+//    // is 5 bytes long:    3 bytes for initials and two bytes for score.
+//    int maxSize = file * 3 * 5 + 15;
+//    for (int i = file * 3 * 5; i < maxSize ; i++) {
+//        EEPROM.write(i, 0);
+//    }
 }
 
 void enterHighScore(byte file, byte level) {
-    // Each block of EEPROM has 3 high scores, and each high score entry
-    // is 5 bytes long:    3 bytes for initials and two bytes for score.
-    int address = file * 3 * 5;
-    byte hi, lo;
-    unsigned int tmpScore = 0;
-
-    // Best time processing
-    hi = EEPROM.read(address + (6 * level));
-    lo = EEPROM.read(address + (6 * level) + 1);
-    if ((hi == 0x00) && (lo == 0x00)) {
-        // The values are uninitialized, so treat this entry
-        // as a score of 999 (max time)
-        tmpScore = 999;
-    } else {
-        tmpScore = (hi << 8) | lo;
-    }
-    if (currentTime < tmpScore) {
-        enterInitials();
-
-        // write score and initials to current slot
-        EEPROM.write(address + (6 * level), ((currentTime >> 8) & 0xFF));
-        EEPROM.write(address + (6 * level) + 1, (currentTime & 0xFF));
-        EEPROM.write(address + (6 * level) + 2, initials[0]);
-        EEPROM.write(address + (6 * level) + 3, initials[1]);
-        EEPROM.write(address + (6 * level) + 4, initials[2]);
-
-        initials[0] = ' ';
-        initials[1] = ' ';
-        initials[2] = ' ';
-
-        return;
-    }
+//    // Each block of EEPROM has 3 high scores, and each high score entry
+//    // is 5 bytes long:    3 bytes for initials and two bytes for score.
+//    int address = file * 3 * 5;
+//    byte hi, lo;
+//    unsigned int tmpScore = 0;
+//
+//    // Best time processing
+//    hi = EEPROM.read(address + (6 * level));
+//    lo = EEPROM.read(address + (6 * level) + 1);
+//    if ((hi == 0x00) && (lo == 0x00)) {
+//        // The values are uninitialized, so treat this entry
+//        // as a score of 999 (max time)
+//        tmpScore = 999;
+//    } else {
+//        tmpScore = (hi << 8) | lo;
+//    }
+//    if (currentTime < tmpScore) {
+//        enterInitials();
+//
+//        // write score and initials to current slot
+//        EEPROM.write(address + (6 * level), ((currentTime >> 8) & 0xFF));
+//        EEPROM.write(address + (6 * level) + 1, (currentTime & 0xFF));
+//        EEPROM.write(address + (6 * level) + 2, initials[0]);
+//        EEPROM.write(address + (6 * level) + 3, initials[1]);
+//        EEPROM.write(address + (6 * level) + 4, initials[2]);
+//
+//        initials[0] = ' ';
+//        initials[1] = ' ';
+//        initials[2] = ' ';
+//
+//        return;
+//    }
 }
 
 //Function by nootropic design to display highscores
 void displayHighScores(byte file) {
-    // Each block of EEPROM has 3 high scores (easy, medium, hard),
-    // and each entry is 5 bytes long:
-    // 3 bytes for initials and two bytes for time.
-    int address = file * 3 * 5;
-    byte hi, lo;
-    arduboy.clear();
-    arduboy.setCursor(34, 5);
-    arduboy.print(F("BEST TIMES"));
-    arduboy.display();
-
-    for (int i = 0; i < 3; i++) {
-        hi = EEPROM.read(address + (6 * i));
-        lo = EEPROM.read(address + (6 * i) + 1);
-
-        if ((hi == 0x00) && (lo == 0x00)) {
-            currentTime = 999;
-        } else {
-            currentTime = (hi << 8) | lo;
-        }
-
-        initials[0] = (char)EEPROM.read(address + (6 * i) + 2);
-        initials[1] = (char)EEPROM.read(address + (6 * i) + 3);
-        initials[2] = (char)EEPROM.read(address + (6 * i) + 4);
-
-        if (currentTime < 999) {
-            sprintf(text_buffer, "%-6s %c%c%c (%u)", levels[i].name, initials[0], initials[1], initials[2], currentTime);
-            arduboy.setCursor(22, 22 + (i * 12));
-            arduboy.print(text_buffer);
-
-            arduboy.display();
-        }
-    }
-    while (true) {
-        if (getButtonDown(DOWN_BUTTON + UP_BUTTON)) {
-            state = STATE_CLEAR_HIGHSCORES;
-            return;
-        } else if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON) ||
-                         getButtonDown(LEFT_BUTTON) || getButtonDown(RIGHT_BUTTON)) {
-            state = STATE_MENU;
-            return;
-        }
-    }
+//    // Each block of EEPROM has 3 high scores (easy, medium, hard),
+//    // and each entry is 5 bytes long:
+//    // 3 bytes for initials and two bytes for time.
+//    int address = file * 3 * 5;
+//    byte hi, lo;
+//    arduboy.clear();
+//    arduboy.setCursor(34, 5);
+//    arduboy.print(F("BEST TIMES"));
+//    arduboy.display();
+//
+//    for (int i = 0; i < 3; i++) {
+//        hi = EEPROM.read(address + (6 * i));
+//        lo = EEPROM.read(address + (6 * i) + 1);
+//
+//        if ((hi == 0x00) && (lo == 0x00)) {
+//            currentTime = 999;
+//        } else {
+//            currentTime = (hi << 8) | lo;
+//        }
+//
+//        initials[0] = (char)EEPROM.read(address + (6 * i) + 2);
+//        initials[1] = (char)EEPROM.read(address + (6 * i) + 3);
+//        initials[2] = (char)EEPROM.read(address + (6 * i) + 4);
+//
+//        if (currentTime < 999) {
+//            sprintf(text_buffer, "%-6s %c%c%c (%u)", levels[i].name, initials[0], initials[1], initials[2], currentTime);
+//            arduboy.setCursor(22, 22 + (i * 12));
+//            arduboy.print(text_buffer);
+//
+//            arduboy.display();
+//        }
+//    }
+//    while (true) {
+//        if (getButtonDown(DOWN_BUTTON + UP_BUTTON)) {
+//            state = STATE_CLEAR_HIGHSCORES;
+//            return;
+//        } else if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON) ||
+//                         getButtonDown(LEFT_BUTTON) || getButtonDown(RIGHT_BUTTON)) {
+//            state = STATE_MENU;
+//            return;
+//        }
+//    }
 }

@@ -1,7 +1,10 @@
 # Ardusweeper (let's call this version 1.0)
 ![in-game screen](https://github.com/jbellue/minesweeper/blob/master/screenshots/ingame.png "In-game screen")
 ![won screen](https://github.com/jbellue/minesweeper/blob/master/screenshots/won.png "Game won screen")
-## A simple minesweeper for arduboy.
+
+## A simple minesweeper for [Micro:Gamer](https://hackaday.io/project/47760-microgamer).
+ (ported from Arduboy).
+ 
 - A grid of 15 * 9,
 - Three levels of difficulty: easy (15 mines), medium (25) and hard (35),
 - Awesome old-school mutable sound effects (because I can't do sound design),
@@ -18,6 +21,15 @@
 - Right button flags a tile
 - A and B validate in the menus
 
+## Build instructions
+
+To compile from source you will need the [Micro:Gamer
+library](https://github.com/MicroGamerConsole/MicroGamer-Arduino), the
+micro:bit board support (see instructions
+[here](https://learn.adafruit.com/use-micro-bit-with-arduino/install-board-and-blink))
+and the Arduino IDE
+
+Open /Source/MicroCity/MicroCity.ino in the Arduino IDE and hit build
 
 ### technical stuff
 Each tile is represented by a byte:

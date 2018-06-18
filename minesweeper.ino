@@ -1,4 +1,4 @@
-#include <Arduboy2.h>
+#include <MicroGamer.h>
 #include <MicroGamerMemoryCard.h>
 
 #include "bitmaps.h"
@@ -44,7 +44,7 @@ enum {
 
 char text_buffer[32]; // General string buffer
 
-Arduboy2 arduboy;
+MicroGamer arduboy;
 MicroGamerMemoryCard mem(4); // There is 3 high score of 5 bytes so we need 4 words (16bytes)
 
 byte selectedX = 0;

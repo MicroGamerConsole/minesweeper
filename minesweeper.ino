@@ -1,5 +1,6 @@
 #include <MicroGamer.h>
 #include <MicroGamerMemoryCard.h>
+#include <MicroGamerTones.h>
 
 #include "bitmaps.h"
 #include "digits.h"
@@ -46,7 +47,7 @@ char text_buffer[32]; // General string buffer
 
 MicroGamer arduboy;
 MicroGamerMemoryCard mem(4); // There is 3 high score of 5 bytes so we need 4 words (16bytes)
-
+MicroGamerTones audio(arduboy.audio.enabled);
 byte selectedX = 0;
 byte selectedY = 0;
 byte menuPosition = 0;
@@ -236,7 +237,7 @@ void propagate(byte x, byte y) {
         return;
     }
 
-//    if (state != STATE_LOSE && arduboy.audio.enabled()) arduboy.tunes.tone(587, 20);
+    if (state != STATE_LOSE && arduboy.audio.enabled()) audio.tone(587, 20);
 
     setOpen(x, y);
     if (getSurroundingMines(x, y) > 0) {
@@ -318,20 +319,20 @@ void settings() {
     if (arduboy.audio.enabled()) arduboy.fillCircle(15, 25, 3, WHITE);
     if (fastMode) arduboy.fillCircle(15, 36, 3, WHITE);
 
-    if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON)) {
+    if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON)) {
         if (menuPosition == 0) {
             if (arduboy.audio.enabled()) {
                 arduboy.audio.off();
             }
             else {
-//                arduboy.tunes.tone(587, 40);
-//                arduboy.audio.on();
+                audio.tone(587, 40);
+                arduboy.audio.on();
             }
             arduboy.audio.saveOnOff();
         }
         else if (menuPosition == 1) {
             fastMode = !fastMode;
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(587, 40);
+            if (arduboy.audio.enabled()) audio.tone(587, 40);
         }
         else if (menuPosition == 2) {
             menuPosition = 0;
@@ -356,7 +357,7 @@ void helpFastMode() {
     arduboy.setCursor(43, 53);
     arduboy.print(F("Careful!"));
 
-    if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON)) {
+    if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON)) {
         state = STATE_SETTINGS;
     }
 }
@@ -384,7 +385,7 @@ void clearHighscoreConfirm() {
     if (getButtonDown(UP_BUTTON) || getButtonDown(DOWN_BUTTON)) {
         menuPosition = (menuPosition == 0) ? 1 : 0;
     }
-    if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON)) {
+    if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON)) {
         if (menuPosition == 0) {
             if (firstTime) {
                 firstTime = false;
@@ -418,7 +419,7 @@ void helpControls() {
         arduboy.drawBitmap(103, 8, noSound, 12, 12, WHITE);
     }
 
-    if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON)) {
+    if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON)) {
         state = STATE_HELP_FAST_MODE;
     }
 }
@@ -444,7 +445,7 @@ void menu() {
         if (menuPosition == 3) menuPosition = 0;
         else menuPosition++;
     }
-    else if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON)) {
+    else if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON)) {
         if (menuPosition == 3) {
             state = STATE_SETTINGS;
             menuPosition = 0;
@@ -499,16 +500,16 @@ void playGame() {
     } else if (clickButton(DOWN_BUTTON) && selectedY < ROWS - 1) {
         selectedY++;
     }
-    if (getButtonDown(A_BUTTON)) {
+    if (getButtonDown(Y_BUTTON)) {
         startTimer();
         clickTile(selectedX, selectedY);
-    } else if (getButtonDown(B_BUTTON)) {
+    } else if (getButtonDown(X_BUTTON)) {
         startTimer();
         if (isFlagged(selectedX, selectedY)) {
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(800, 50);
+            if (arduboy.audio.enabled()) audio.tone(800, 50);
             unsetFlag(selectedX, selectedY);
         } else if (!isOpen(selectedX, selectedY)) {
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(980, 50);
+            if (arduboy.audio.enabled()) audio.tone(980, 50);
             setFlag(selectedX, selectedY);
         } else if (fastMode) {
             clickAllSurrounding(selectedX, selectedY);
@@ -528,15 +529,15 @@ void winGame() {
     arduboy.drawBitmap(109, 14, win, 18, 30, WHITE);
     arduboy.display();
 
-//    if (arduboy.audio.enabled()) {
-//        arduboy.tunes.tone(587, 40);
-//        delay(160);
-//        arduboy.tunes.tone(782, 40);
-//        delay(160);
-//        arduboy.tunes.tone(977, 40);
-//    }
+    if (arduboy.audio.enabled()) {
+        audio.tone(587, 40);
+        delay(160);
+        audio.tone(782, 40);
+        delay(160);
+        audio.tone(977, 40);
+    }
 
-    while (!getButtonDown(A_BUTTON)) {
+    while (!getButtonDown(Y_BUTTON)) {
     }
     enterHighScore(HIGH_SCORE_FILE_NAME, menuPosition);
 
@@ -552,12 +553,12 @@ void loseGame() {
     arduboy.display();
 
     if (arduboy.audio.enabled()) {
-//        arduboy.tunes.tone(587, 40);
+        audio.tone(587, 40);
         delay(160);
-//        arduboy.tunes.tone(392, 40);
+        audio.tone(392, 40);
     }
 
-    while (!getButtonDown(A_BUTTON)) {
+    while (!getButtonDown(Y_BUTTON)) {
     }
     reset();
     state = STATE_MENU;
@@ -649,22 +650,22 @@ void enterInitials() {
         arduboy.fillTriangle(56 + (index * 8), 32, 56 + (index * 8) + 2, 32, 56 + (index * 8) + 1, 31, 1);
         arduboy.fillTriangle(56 + (index * 8), 45, 56 + (index * 8) + 2, 45, 56 + (index * 8) + 1, 46, 1);
 
-        if (getButtonDown(LEFT_BUTTON) || getButtonDown(B_BUTTON)) {
+        if (getButtonDown(LEFT_BUTTON) || getButtonDown(X_BUTTON)) {
             if (index > 0) {
                 index--;
             }
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+            if (arduboy.audio.enabled()) audio.tone(1046, 50);
         }
         else if (getButtonDown(RIGHT_BUTTON)) {
             if (index < 2) {
                 index++;
             }
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+            if (arduboy.audio.enabled()) audio.tone(1046, 50);
         }
 
         if (clickButton(DOWN_BUTTON)) {
             initials[index]++;
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
+            if (arduboy.audio.enabled()) audio.tone(523, 25);
             // A-Z 0-9 :-? !-/ ' '
             if (initials[index] == '0') {
                 initials[index] = ' ';
@@ -678,7 +679,7 @@ void enterInitials() {
         }
         else if (clickButton(UP_BUTTON)) {
             initials[index]--;
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(523, 25);
+            if (arduboy.audio.enabled()) audio.tone(523, 25);
             if (initials[index] == ' ') {
                 initials[index] = '?';
             } else if (initials[index] == '/') {
@@ -690,8 +691,8 @@ void enterInitials() {
             }
         }
 
-        if (getButtonDown(A_BUTTON)) {
-//            if (arduboy.audio.enabled()) arduboy.tunes.tone(1046, 50);
+        if (getButtonDown(Y_BUTTON)) {
+            if (arduboy.audio.enabled()) audio.tone(1046, 50);
             if (index < 2) {
                 index++;
             } else {
@@ -788,7 +789,7 @@ void displayHighScores(byte file) {
         if (getButtonDown(DOWN_BUTTON + UP_BUTTON)) {
             state = STATE_CLEAR_HIGHSCORES;
             return;
-        } else if (getButtonDown(A_BUTTON) || getButtonDown(B_BUTTON) ||
+        } else if (getButtonDown(Y_BUTTON) || getButtonDown(X_BUTTON) ||
                          getButtonDown(LEFT_BUTTON) || getButtonDown(RIGHT_BUTTON)) {
             state = STATE_MENU;
             return;
